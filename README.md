@@ -2,7 +2,11 @@
 
 A polished full-stack machine learning project that predicts house prices from area, bedroom count, and property age using a linear regression model.
 
+## Sample Screenshot
+
 ![Home Prediction App preview](assets/screenshot.svg)
+
+This preview shows the polished prediction form and results card used by the app.
 
 ## Overview
 
