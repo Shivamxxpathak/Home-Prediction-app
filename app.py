@@ -1,15 +1,20 @@
+from pathlib import Path
+
 from flask import Flask, render_template, request, jsonify
 import joblib
 import numpy as np
 
-app = Flask(__name__)
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / 'model.pkl'
+
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # Load the trained model
 try:
-    model = joblib.load('model.pkl')
-    print("Model loaded successfully.")
+    model = joblib.load(MODEL_PATH)
+    print(f"Model loaded successfully from {MODEL_PATH}.")
 except FileNotFoundError:
-    print("Warning: model.pkl not found. Please run model.py first to train the model.")
+    print(f"Warning: {MODEL_PATH.name} not found. Please run model.py first to train the model.")
     model = None
 
 @app.route('/')

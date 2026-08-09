@@ -1,68 +1,72 @@
-# House Price Predictor Web App
+# Home Prediction App
 
-A beautiful, full-stack machine learning web application that predicts house prices based on Area, Bedrooms, and Age.
+A polished full-stack machine learning project that predicts house prices from area, bedroom count, and property age using a linear regression model.
 
-![House Price Predictor](assets/screenshot.png)
+![Home Prediction App preview](assets/screenshot.svg)
 
 ## Overview
 
-This project demonstrates how to build a complete Machine Learning application from scratch and integrate it into a modern web interface. It uses **Multiple Linear Regression** on the backend and a premium **Glassmorphism** design on the frontend.
+This repository demonstrates a clean end-to-end workflow for building a small ML web app:
+- train a regression model with synthetic data,
+- serialize it with joblib,
+- serve it through Flask,
+- and present it with a modern glassmorphism-style interface.
 
-### Tech Stack
-- **Frontend**: HTML5, Vanilla CSS (Glassmorphism UI), JavaScript (Fetch API)
-- **Backend**: Python, Flask, RESTful API
-- **Machine Learning**: Scikit-Learn (Linear Regression), Pandas, Numpy, Joblib
+## Tech Stack
+- Frontend: HTML, CSS, JavaScript
+- Backend: Python, Flask
+- Machine Learning: scikit-learn, pandas, numpy, joblib
 
 ## Features
-
-- **Synthetic Data Generation**: Generates 500 records of synthetic house data for training.
-- **Model Training Pipeline**: A standalone script (`model.py`) to train the linear regression model and serialize it to disk.
-- **REST API**: A Flask application that exposes a `/predict` endpoint to accept input features and return a price estimate.
-- **Premium UI**: A sleek, responsive, glassmorphic frontend with smooth micro-animations and gradients.
+- Synthetic dataset generation for 500 training samples
+- Model training pipeline in a dedicated script
+- REST-style prediction endpoint for the UI
+- Organized static assets and templates for a cleaner repository layout
 
 ## Quick Start
 
-### 1. Install Dependencies
-Make sure you have Python installed. Then, create a virtual environment and install the required packages:
-
+### 1. Create and activate a virtual environment
 ```bash
 python -m venv venv
 
-# On Windows
+# Windows
 venv\Scripts\activate
-# On macOS/Linux
-source venv/bin/activate
 
+# macOS/Linux
+source venv/bin/activate
+```
+
+### 2. Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-> **Note**: If you encounter errors installing `scikit-learn` on Windows, you may need to install the **Microsoft Visual C++ 14.0 Build Tools**.
-
-### 2. Train the Model
-Run the model script to generate data, train the Linear Regression model, and create the `model.pkl` file:
-
+### 3. Train the model
 ```bash
 python model.py
 ```
 
-### 3. Run the Web Server
-Start the Flask backend application:
-
+### 4. Run the app
 ```bash
 python app.py
 ```
 
-Open your browser and navigate to `http://127.0.0.1:5000/`.
+Then open http://127.0.0.1:5000/ in your browser.
 
-## Project Structure
-
-```
-├── app.py                  # Flask backend server
+## Repository Structure
+```text
+Home-Prediction-app/
+├── app.py                  # Flask application entry point
 ├── model.py                # Model training script
 ├── requirements.txt        # Python dependencies
-├── templates/
-│   └── index.html          # Frontend UI
-├── static/
-│   └── style.css           # Glassmorphism styling
-└── assets/                 # Images for documentation
+├── templates/              # HTML pages for the web UI
+│   └── index.html
+├── static/                 # CSS and frontend assets
+│   └── style.css
+├── assets/                 # Project screenshots and media
+│   └── screenshot.svg
+└── .gitignore              # Files to ignore in Git
 ```
+
+## Notes
+If you run into install issues with scikit-learn on Windows, you may need the Microsoft Visual C++ Build Tools installed on your machine.
