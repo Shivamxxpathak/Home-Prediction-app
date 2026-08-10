@@ -6,57 +6,94 @@ import joblib
 
 MODEL_PATH = Path(__file__).resolve().parent / 'model.pkl'
 
+GLOBAL_REGIONS = [
+    'North America',
+    'Europe',
+    'Asia',
+    'Latin America',
+    'Africa',
+    'Oceania'
+]
+
+REGION_MULTIPLIERS = {
+    'North America': 1.00,
+    'Europe': 0.95,
+    'Asia': 0.80,
+    'Latin America': 0.60,
+    'Africa': 0.45,
+    'Oceania': 1.05,
+}
+
+
+def _feature_columns():
+    columns = ['Area', 'Bedrooms', 'Age']
+    columns.extend([f'Region_{region}' for region in GLOBAL_REGIONS])
+    return columns
+
+
+def prepare_features(area, bedrooms, age, region):
+    if region not in GLOBAL_REGIONS:
+        raise ValueError(f"Unknown region: {region}. Valid regions: {', '.join(GLOBAL_REGIONS)}")
+
+    df = pd.DataFrame([
+        {
+            'Area': area,
+            'Bedrooms': bedrooms,
+            'Age': age,
+            'Region': region,
+        }
+    ])
+    features = pd.get_dummies(df, columns=['Region'])
+    return features.reindex(columns=_feature_columns(), fill_value=0).values
+
+
 def create_and_train_model():
-    print("Generating synthetic dataset...")
-    # Generate random synthetic data for house prices
+    print("Generating global synthetic dataset...")
     np.random.seed(42)
-    
-    # 500 samples
-    n_samples = 500
-    
-    # Features:
-    # Area in sq ft: 800 to 4000
-    area = np.random.randint(800, 4000, n_samples)
-    
-    # Bedrooms: 1 to 6
-    bedrooms = np.random.randint(1, 7, n_samples)
-    
-    # Age in years: 0 to 50
-    age = np.random.randint(0, 51, n_samples)
-    
-    # Base price
-    base_price = 50000
-    
-    # Linear combination with some noise
-    # Price = Base + Area*150 + Bedrooms*15000 - Age*1000 + Noise
-    noise = np.random.normal(0, 15000, n_samples)
-    
-    price = base_price + (area * 150) + (bedrooms * 15000) - (age * 1000) + noise
-    
-    # Create DataFrame
+
+    n_samples = 2000
+
+    area = np.random.randint(700, 6000, n_samples)
+    bedrooms = np.random.randint(1, 8, n_samples)
+    age = np.random.randint(0, 70, n_samples)
+    regions = np.random.choice(GLOBAL_REGIONS, n_samples)
+
+    base_price = 30000
+    price = base_price + (area * 130) + (bedrooms * 12000) - (age * 800)
+    price = price * np.array([REGION_MULTIPLIERS[r] for r in regions])
+    price += np.random.normal(0, 20000, n_samples)
+
     df = pd.DataFrame({
         'Area': area,
         'Bedrooms': bedrooms,
         'Age': age,
-        'Price': price
+        'Region': regions,
+        'Price': price,
     })
-    
-    print("Dataset generated with 500 samples.")
-    
-    # Features and Target
-    X = df[['Area', 'Bedrooms', 'Age']]
+
+    print(f"Dataset generated with {n_samples} global samples.")
+
+    X = pd.get_dummies(df[['Area', 'Bedrooms', 'Age', 'Region']], columns=['Region'])
+    X = X.reindex(columns=_feature_columns(), fill_value=0)
     y = df['Price']
-    
-    print("Training Linear Regression model...")
-    # Initialize and train model
+
+    print("Training Linear Regression model for global markets...")
     model = LinearRegression()
     model.fit(X, y)
-    
-    print(f"Model trained! R^2 Score: {model.score(X, y):.4f}")
-    
-    # Save the model
-    joblib.dump(model, MODEL_PATH)
+
+    r2_score = model.score(X, y)
+    print(f"Model trained! R^2 Score: {r2_score:.4f}")
+
+    model_data = {
+        'model': model,
+        'feature_columns': _feature_columns(),
+        'regions': GLOBAL_REGIONS,
+    }
+
+    joblib.dump(model_data, MODEL_PATH)
     print(f"Model saved successfully to {MODEL_PATH}")
+    return model_data
+
 
 if __name__ == '__main__':
     create_and_train_model()

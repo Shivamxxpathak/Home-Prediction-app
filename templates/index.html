@@ -28,6 +28,16 @@
           <label for="age">Age (years)</label>
           <input id="age" name="age" type="number" min="0" step="1" required />
 
+          <label for="region">Market region</label>
+          <select id="region" name="region" required>
+            <option value="North America">North America</option>
+            <option value="Europe">Europe</option>
+            <option value="Asia">Asia</option>
+            <option value="Latin America">Latin America</option>
+            <option value="Africa">Africa</option>
+            <option value="Oceania">Oceania</option>
+          </select>
+
           <button type="submit">Predict Price</button>
         </form>
 
@@ -48,6 +58,7 @@
           area: Number(document.getElementById('area').value),
           bedrooms: Number(document.getElementById('bedrooms').value),
           age: Number(document.getElementById('age').value),
+          region: document.getElementById('region').value,
         };
 
         resultBox.textContent = 'Predicting...';

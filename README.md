@@ -11,10 +11,13 @@ This preview shows the polished prediction form and results card used by the app
 ## Overview
 
 This repository demonstrates a clean end-to-end workflow for building a small ML web app:
-- train a regression model with synthetic data,
+- train a regression model with global synthetic market data and region-aware market adjustments,
 - serialize it with joblib,
 - serve it through Flask,
 - and present it with a modern glassmorphism-style interface.
+
+## Live Demo
+- Hosted on Render: https://home-prediction-app.onrender.com/
 
 ## Tech Stack
 - Frontend: HTML, CSS, JavaScript
@@ -23,7 +26,7 @@ This repository demonstrates a clean end-to-end workflow for building a small ML
 
 ## Features
 - Synthetic dataset generation for 500 training samples
-- Model training pipeline in a dedicated script
+- Model training pipeline in a dedicated script with global market region support
 - REST-style prediction endpoint for the UI
 - Organized static assets and templates for a cleaner repository layout
 
