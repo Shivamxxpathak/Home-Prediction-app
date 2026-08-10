@@ -74,3 +74,11 @@ Home-Prediction-app/
 
 ## Notes
 If you run into install issues with scikit-learn on Windows, you may need the Microsoft Visual C++ Build Tools installed on your machine.
+
+## Deploying to Render
+This repository includes deployment files for Render:
+- Procfile
+- render.yaml
+- runtime.txt
+
+When the app starts on a fresh host, it will automatically train the model if the model file is missing.

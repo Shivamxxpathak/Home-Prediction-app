@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from sklearn.linear_model import LinearRegression
 import joblib
+
+MODEL_PATH = Path(__file__).resolve().parent / 'model.pkl'
 
 def create_and_train_model():
     print("Generating synthetic dataset...")
@@ -52,9 +55,8 @@ def create_and_train_model():
     print(f"Model trained! R^2 Score: {model.score(X, y):.4f}")
     
     # Save the model
-    model_filename = 'model.pkl'
-    joblib.dump(model, model_filename)
-    print(f"Model saved successfully to {model_filename}")
+    joblib.dump(model, MODEL_PATH)
+    print(f"Model saved successfully to {MODEL_PATH}")
 
 if __name__ == '__main__':
     create_and_train_model()
