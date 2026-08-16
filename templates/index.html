@@ -3,83 +3,170 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Price Predictor</title>
+    <meta name="description" content="Estimate a home's price using a Flask and scikit-learn machine learning model." />
+    <title>Home Price Predictor | ML Web App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
-    <div class="app-shell">
-      <div class="hero-card">
+    <main class="app-shell">
+      <section class="hero-card" aria-labelledby="page-title">
         <div class="hero-copy">
-          <p class="eyebrow">Machine Learning • Flask • Python</p>
-          <h1>Estimate a home price in seconds</h1>
-          <p>
-            Enter the size, number of bedrooms, and age of the property to get a
-            real-time prediction from a trained regression model.
+          <div class="brand-row">
+            <div class="brand-mark">HP</div>
+            <span>Machine Learning • Flask • Python</span>
+          </div>
+          <p class="eyebrow">Smart Property Estimation</p>
+          <h1 id="page-title">Estimate a home price in seconds.</h1>
+          <p class="intro">
+            Enter a few property details and get an instant estimated value from a trained
+            regression model. This project demonstrates an end-to-end machine learning workflow.
           </p>
+
+          <div class="feature-grid" aria-label="Application features">
+            <div class="feature"><span>01</span><strong>Enter details</strong><small>Area, bedrooms, age</small></div>
+            <div class="feature"><span>02</span><strong>Select market</strong><small>Choose a region</small></div>
+            <div class="feature"><span>03</span><strong>Get estimate</strong><small>Instant model output</small></div>
+          </div>
+
+          <p class="disclaimer">Educational ML project using a synthetic dataset. Predictions are estimates, not property valuations.</p>
         </div>
 
-        <form id="prediction-form" class="prediction-form">
-          <label for="area">Area (sq ft)</label>
-          <input id="area" name="area" type="number" min="500" step="1" required />
+        <div class="predictor-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker">Prediction form</p>
+              <h2>Property details</h2>
+            </div>
+            <div class="status-dot" title="Model available"><span></span> Ready</div>
+          </div>
 
-          <label for="bedrooms">Bedrooms</label>
-          <input id="bedrooms" name="bedrooms" type="number" min="1" step="1" required />
+          <form id="prediction-form" novalidate>
+            <div class="field-grid">
+              <div class="field field-wide">
+                <label for="area">Area <span>(sq ft)</span></label>
+                <input id="area" name="area" type="number" min="700" max="6000" step="1" placeholder="e.g. 1800" required />
+                <small>700–6,000 sq ft</small>
+              </div>
 
-          <label for="age">Age (years)</label>
-          <input id="age" name="age" type="number" min="0" step="1" required />
+              <div class="field">
+                <label for="bedrooms">Bedrooms</label>
+                <input id="bedrooms" name="bedrooms" type="number" min="1" max="7" step="1" placeholder="e.g. 3" required />
+                <small>1–7 bedrooms</small>
+              </div>
 
-          <label for="region">Market region</label>
-          <select id="region" name="region" required>
-            <option value="North America">North America</option>
-            <option value="Europe">Europe</option>
-            <option value="Asia">Asia</option>
-            <option value="Latin America">Latin America</option>
-            <option value="Africa">Africa</option>
-            <option value="Oceania">Oceania</option>
-          </select>
+              <div class="field">
+                <label for="age">Age <span>(years)</span></label>
+                <input id="age" name="age" type="number" min="0" max="69" step="1" placeholder="e.g. 8" required />
+                <small>0–69 years</small>
+              </div>
 
-          <button type="submit">Predict Price</button>
-        </form>
+              <div class="field field-wide">
+                <label for="region">Market region</label>
+                <select id="region" name="region" required>
+                  {% for region in regions %}
+                  <option value="{{ region }}">{{ region }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
 
-        <div id="result" class="result-box" aria-live="polite">
-          Fill the form to see your estimate.
+            <div class="actions">
+              <button id="predict-button" type="submit">
+                <span class="button-text">Predict Price</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+              <button id="reset-button" class="secondary-button" type="button">Reset</button>
+            </div>
+          </form>
+
+          <div id="result" class="result-box" aria-live="polite" aria-atomic="true">
+            <span class="result-label">Estimated value</span>
+            <strong id="prediction-value">—</strong>
+            <small id="result-message">Fill in the property details to generate a prediction.</small>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <script>
       const form = document.getElementById('prediction-form');
       const resultBox = document.getElementById('result');
+      const predictionValue = document.getElementById('prediction-value');
+      const resultMessage = document.getElementById('result-message');
+      const predictButton = document.getElementById('predict-button');
+      const resetButton = document.getElementById('reset-button');
+
+      const fields = {
+        area: document.getElementById('area'),
+        bedrooms: document.getElementById('bedrooms'),
+        age: document.getElementById('age'),
+        region: document.getElementById('region')
+      };
+
+      function setResult(type, value, message) {
+        resultBox.className = `result-box ${type || ''}`;
+        predictionValue.textContent = value;
+        resultMessage.textContent = message;
+      }
+
+      function setLoading(loading) {
+        predictButton.disabled = loading;
+        predictButton.classList.toggle('loading', loading);
+        predictButton.querySelector('.button-text').textContent = loading ? 'Predicting...' : 'Predict Price';
+      }
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const payload = {
-          area: Number(document.getElementById('area').value),
-          bedrooms: Number(document.getElementById('bedrooms').value),
-          age: Number(document.getElementById('age').value),
-          region: document.getElementById('region').value,
-        };
+        const area = Number(fields.area.value);
+        const bedrooms = Number(fields.bedrooms.value);
+        const age = Number(fields.age.value);
 
-        resultBox.textContent = 'Predicting...';
+        if (!Number.isFinite(area) || area < 700 || area > 6000) {
+          setResult('error', 'Invalid area', 'Enter an area between 700 and 6,000 sq ft.');
+          fields.area.focus();
+          return;
+        }
+        if (!Number.isInteger(bedrooms) || bedrooms < 1 || bedrooms > 7) {
+          setResult('error', 'Invalid bedrooms', 'Enter a bedroom count between 1 and 7.');
+          fields.bedrooms.focus();
+          return;
+        }
+        if (!Number.isFinite(age) || age < 0 || age > 69) {
+          setResult('error', 'Invalid age', 'Enter a property age between 0 and 69 years.');
+          fields.age.focus();
+          return;
+        }
+
+        setLoading(true);
+        setResult('', 'Calculating…', 'The regression model is processing your property details.');
 
         try {
           const response = await fetch('/predict', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ area, bedrooms, age, region: fields.region.value })
           });
 
           const data = await response.json();
+          if (!response.ok || !data.success) throw new Error(data.error || 'Prediction failed.');
 
-          if (!response.ok) {
-            throw new Error(data.error || 'Prediction failed.');
-          }
-
-          resultBox.innerHTML = `<strong>${data.prediction}</strong> estimated value`;
+          setResult('success', data.prediction, `Estimated for ${fields.region.value}.`);
         } catch (error) {
-          resultBox.textContent = error.message;
+          setResult('error', 'Unable to predict', error.message || 'Please try again.');
+        } finally {
+          setLoading(false);
         }
+      });
+
+      resetButton.addEventListener('click', () => {
+        form.reset();
+        fields.region.value = fields.region.options[0].value;
+        setResult('', '—', 'Fill in the property details to generate a prediction.');
+        fields.area.focus();
       });
     </script>
   </body>
