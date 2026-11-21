@@ -1,71 +1,61 @@
-# 🏠 Home Prediction App
+# Home Prediction App
 
-A polished end-to-end machine learning web application that estimates house prices from property characteristics using **Python, Flask, Pandas, NumPy, Scikit-learn, and Joblib**.
+A responsive machine-learning web application that estimates property prices from property characteristics. Built with Python, Flask, Pandas, NumPy, Scikit-learn, and Joblib.
 
-## ✨ What’s New
+## Overview
 
-- Modern responsive glassmorphism UI
-- Clear three-step prediction workflow
-- Client-side and server-side input validation
-- Loading state with prediction feedback
-- Reset button for quick new predictions
-- Accessible live result area and descriptive labels
-- `/health` endpoint for deployment monitoring
-- Safer API error handling without exposing internal exceptions
-- Responsive layout for desktop, tablet, and mobile
+The application provides an end-to-end prediction workflow:
 
-## 📸 Preview
+1. Generate or load a housing dataset.
+2. Clean and validate the data.
+3. Compare regression models using a held-out test set.
+4. Select a model based on test RMSE.
+5. Save the trained model and evaluation artifacts.
+6. Serve predictions through a Flask web interface and JSON API.
+
+**Data limitation:** The default dataset is synthetic. Predictions are illustrative estimates and must not be treated as professional property valuations or evidence of actual market accuracy.
+
+## Live Demo
+
+[Open the deployed app](https://home-prediction-app.onrender.com/)
+
+## Preview
 
 ![Home Prediction App preview](assets/screenshot.svg)
 
-## 🎯 Overview
+## Features
 
-The application demonstrates a complete ML workflow:
+- Responsive property prediction interface
+- Input validation on client and server
+- Prediction loading and result states
+- Model comparison and evaluation metrics
+- Actual-versus-predicted and residual diagnostic plots
+- Model transparency endpoint
+- Health-check endpoint
+- CSV dataset support
+- Automated tests with GitHub Actions
 
-1. Generate a synthetic housing dataset with 2,000 samples.
-2. Add region-aware market adjustments.
-3. Train a Linear Regression model.
-4. Serialize the trained model with Joblib.
-5. Serve predictions through Flask.
-6. Collect user inputs through a responsive web interface.
-7. Return a formatted estimated property value through a JSON API.
+## Technology Stack
 
-> **Important:** This is an educational machine learning project based on synthetic data. Predictions are estimates and should not be treated as professional property valuations.
-
-## 🚀 Live Demo
-
-Hosted on Render: https://home-prediction-app.onrender.com/
-
-## 🧰 Tech Stack
-
-- **Frontend:** HTML5, CSS3, JavaScript
+- **Frontend:** HTML, CSS, JavaScript
 - **Backend:** Python, Flask
-- **Machine Learning:** Scikit-learn, Linear Regression
-- **Data:** Pandas, NumPy
-- **Model Persistence:** Joblib
+- **Machine learning:** Scikit-learn (Linear Regression, Random Forest, HistGradientBoosting)
+- **Data processing:** Pandas, NumPy
+- **Model persistence:** Joblib
 - **Deployment:** Render
 
-## 🔥 Features
+## Prediction Inputs
 
-### Prediction
 - Area: 700–6,000 sq ft
 - Bedrooms: 1–7
 - Property age: 0–69 years
-- Market region: North America, Europe, Asia, Latin America, Africa, Oceania
+- Region: North America, Europe, Asia, Latin America, Africa, or Oceania
 
-### User Experience
-- Responsive modern interface
-- Real-time validation messages
-- Loading animation while predicting
-- Form reset control
-- Success and error result states
-- Keyboard-friendly form controls
+## API
 
-### API
+### `POST /predict`
 
-**POST `/predict`**
-
-Accepts JSON containing:
+Example request:
 
 ```json
 {
@@ -76,7 +66,7 @@ Accepts JSON containing:
 }
 ```
 
-Returns a formatted prediction such as:
+Example response:
 
 ```json
 {
@@ -86,130 +76,105 @@ Returns a formatted prediction such as:
 }
 ```
 
-**GET `/health`**
+### `GET /health`
 
-Returns model availability and application status for deployment monitoring.
+Returns application and model availability.
 
-## 🧪 Run Locally
+### `GET /metrics`
 
-### 1. Clone the repository
+Returns the selected model, evaluation metrics, dataset details, and training information.
 
-```bash
-git clone https://github.com/Shivamxxpathak/Home-Prediction-app.git
-cd Home-Prediction-app
-```
+## Model Training and Evaluation
 
-### 2. Create a virtual environment
+The training pipeline compares Linear Regression, Random Forest, and HistGradientBoosting using an 80/20 train-test split with a fixed random seed. The model with the lowest test RMSE is selected. The pipeline reports MAE, RMSE, and R².
 
-```bash
-python -m venv venv
-```
-
-Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-macOS/Linux:
-
-```bash
-source venv/bin/activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Train the model
+Run training:
 
 ```bash
 python model.py
 ```
 
-### 5. Start Flask
+Generated artifacts include:
+
+- `model.pkl` — trained model bundle
+- `reports/model_metrics.json` — evaluation summary
+- `reports/plots/actual_vs_predicted.png`
+- `reports/plots/residual_plot.png`
+- `reports/plots/feature_importance.png` (when supported)
+
+For details about data processing and limitations, see [Dataset and Model Methodology](docs/DATA_AND_MODEL.md).
+
+## Use a CSV Dataset
+
+Run the pipeline with your own dataset:
 
 ```bash
-python app.py
-```
-
-Open `http://127.0.0.1:5000/`.
-
-## 📁 Repository Structure
-
-```text
-Home-Prediction-app/
-├── app.py                  # Flask application and prediction API
-├── model.py                # Dataset generation and model training
-├── model.pkl               # Serialized trained model, when generated
-├── requirements.txt        # Python dependencies
-├── Procfile                # Render process configuration
-├── render.yaml             # Render deployment configuration
-├── templates/
-│   └── index.html          # Prediction interface
-├── static/
-│   └── style.css           # Responsive application styling
-├── assets/
-│   └── screenshot.svg      # Project preview
-└── README.md
-```
-
-## 📌 Model Notes
-
-The training pipeline creates synthetic data with relationships between area, bedrooms, age, and regional market multipliers. A Linear Regression model is trained on those generated relationships.
-
-Because the training data is synthetic, model performance should not be interpreted as evidence of real-world housing-market accuracy.
-
-## ☁️ Deploying to Render
-
-The repository includes the Render deployment configuration. The application reads the `PORT` environment variable and binds to `0.0.0.0`, making it compatible with Render's web service runtime.
-
-## 👨‍💻 Author
-
-**Shivam Pathak**
-
-- GitHub: https://github.com/Shivamxxpathak
-- Portfolio: https://shivamxxpathak.github.io/
-
-## College-Ready Model Evaluation
-
-The training workflow now compares Linear Regression, Random Forest, and HistGradientBoosting using an 80/20 holdout split (random_state=42). It selects the lowest test RMSE and reports MAE, RMSE, and R².
-
-Run the pipeline:
-
-~~~bash
-python model.py
-~~~
-
-Generated artifacts:
-- model.pkl — selected model and metadata
-- reports/model_metrics.json — model scores, split details, and data source
-- reports/plots/actual_vs_predicted.png
-- reports/plots/residual_plot.png
-- reports/plots/feature_importance.png (when supported)
-
-## Train with a CSV dataset
-
-~~~bash
 python model.py --data data/your_housing_dataset.csv
-~~~
+```
 
-Required columns: Area, Bedrooms, Age, Region, Price. See [Dataset and Model Methodology](docs/DATA_AND_MODEL.md) for cleaning, provenance, and limitations. The project does not include a verified licensed real-property dataset; default data remains synthetic and must not be presented as real-market accuracy.
+Required columns: `Area`, `Bedrooms`, `Age`, `Region`, `Price`.
 
-## Model Transparency API
+The dataset must have documented provenance and appropriate usage rights. The repository does not currently contain a verified licensed real-property dataset.
 
-- GET /metrics — evaluation details and selected model
-- GET /health — application/model status
-- POST /predict — estimate based on form inputs
+## Run Locally
 
-## College Presentation
+1. Clone the repository:
 
-Use [College Presentation Checklist](docs/COLLEGE_PRESENTATION.md) for suggested PPT/report flow and viva questions.
+   ```bash
+   git clone https://github.com/Shivamxxpathak/Home-Prediction-app.git
+   cd Home-Prediction-app
+   ```
+
+2. Create and activate a virtual environment:
+
+   ```bash
+   python -m venv venv
+   ```
+
+   Windows:
+
+   ```bash
+   venv\\Scripts\\activate
+   ```
+
+   macOS/Linux:
+
+   ```bash
+   source venv/bin/activate
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Train the model and start the server:
+
+   ```bash
+   python model.py
+   python app.py
+   ```
+
+5. Open [http://127.0.0.1:5000](http://127.0.0.1:5000).
 
 ## Tests
 
-~~~bash
+Run the test suite:
+
+```bash
 pytest -q
-~~~
+```
+
+GitHub Actions runs the tests on repository updates.
+
+## Deployment
+
+The repository includes a Render configuration. The app uses the `PORT` environment variable and binds to `0.0.0.0`.
+
+## Repository Owner
+
+**Shivam Pathak**
+
+- [GitHub](https://github.com/Shivamxxpathak)
+- [Portfolio](https://shivamxxpathak.github.io/)
