@@ -89,6 +89,19 @@
           </div>
         </div>
       </section>
+      <section class="evaluation-card" aria-labelledby="evaluation-title">
+        <div class="evaluation-heading">
+          <div><p class="panel-kicker">Model transparency</p><h2 id="evaluation-title">Training &amp; evaluation snapshot</h2></div>
+          <a href="/metrics" target="_blank" rel="noopener">View metrics JSON ↗</a>
+        </div>
+        <div class="evaluation-grid">
+          <div><span>Selected model</span><strong>{{ metrics.get('selected_model', 'Train model to view') }}</strong></div>
+          <div><span>Rows used</span><strong>{{ metrics.get('rows_after_cleaning', '—') }}</strong></div>
+          <div><span>Test records</span><strong>{{ metrics.get('test_rows', '—') }}</strong></div>
+          <div><span>Validation split</span><strong>80 / 20</strong></div>
+        </div>
+        <p class="evaluation-note">{{ metrics.get('note', 'Metrics appear after model training.') }}</p>
+      </section>
     </main>
 
     <script>
