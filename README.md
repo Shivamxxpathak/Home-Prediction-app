@@ -172,3 +172,44 @@ The repository includes the Render deployment configuration. The application rea
 
 - GitHub: https://github.com/Shivamxxpathak
 - Portfolio: https://shivamxxpathak.github.io/
+
+## College-Ready Model Evaluation
+
+The training workflow now compares Linear Regression, Random Forest, and HistGradientBoosting using an 80/20 holdout split (random_state=42). It selects the lowest test RMSE and reports MAE, RMSE, and R².
+
+Run the pipeline:
+
+~~~bash
+python model.py
+~~~
+
+Generated artifacts:
+- model.pkl — selected model and metadata
+- reports/model_metrics.json — model scores, split details, and data source
+- reports/plots/actual_vs_predicted.png
+- reports/plots/residual_plot.png
+- reports/plots/feature_importance.png (when supported)
+
+## Train with a CSV dataset
+
+~~~bash
+python model.py --data data/your_housing_dataset.csv
+~~~
+
+Required columns: Area, Bedrooms, Age, Region, Price. See [Dataset and Model Methodology](docs/DATA_AND_MODEL.md) for cleaning, provenance, and limitations. The project does not include a verified licensed real-property dataset; default data remains synthetic and must not be presented as real-market accuracy.
+
+## Model Transparency API
+
+- GET /metrics — evaluation details and selected model
+- GET /health — application/model status
+- POST /predict — estimate based on form inputs
+
+## College Presentation
+
+Use [College Presentation Checklist](docs/COLLEGE_PRESENTATION.md) for suggested PPT/report flow and viva questions.
+
+## Tests
+
+~~~bash
+pytest -q
+~~~
