@@ -281,3 +281,75 @@ button:disabled { cursor: wait; opacity: .75; }
 .evaluation-grid strong{font-size:.95rem;overflow-wrap:anywhere}
 .evaluation-note{margin:18px 0 0;color:var(--muted);font-size:.76rem;line-height:1.6}
 @media(max-width:650px){.evaluation-card{padding:20px}.evaluation-heading{align-items:flex-start;flex-direction:column}.evaluation-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+/* Theme switch */
+.theme-toggle {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  z-index: 20;
+  min-height: 40px;
+  padding: 0 15px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  font-size: .78rem;
+}
+.theme-toggle:hover:not(:disabled) { transform: translateY(-1px); }
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f7fb;
+  --bg-2: #e8eef7;
+  --panel: rgba(255,255,255,.92);
+  --panel-soft: rgba(15, 35, 65, .045);
+  --border: rgba(28, 48, 77, .14);
+  --text: #172338;
+  --muted: #5e6d83;
+  --accent: #0891b2;
+  --accent-2: #2563eb;
+  --success: #16a34a;
+  --danger: #e11d48;
+}
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 10% 15%, rgba(96,165,250,.13), transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(103,232,249,.14), transparent 28%),
+    linear-gradient(135deg, var(--bg), var(--bg-2));
+}
+:root[data-theme="light"] .hero-card,
+:root[data-theme="light"] .evaluation-card {
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 24px 70px rgba(30, 55, 90, .12);
+}
+:root[data-theme="light"] .predictor-panel {
+  background: rgba(255,255,255,.76);
+}
+:root[data-theme="light"] input,
+:root[data-theme="light"] select {
+  background: rgba(255,255,255,.9);
+  color: var(--text);
+}
+:root[data-theme="light"] input:focus,
+:root[data-theme="light"] select:focus {
+  background: #fff;
+}
+:root[data-theme="light"] .status-dot {
+  color: #166534;
+  background: rgba(34,197,94,.08);
+}
+:root[data-theme="light"] .result-box.success strong { color: #166534; }
+:root[data-theme="light"] .result-box.error strong { color: #9f1239; }
+:root[data-theme="light"] .disclaimer,
+:root[data-theme="light"] .feature small,
+:root[data-theme="light"] .field small { color: #68778d; }
+:root[data-theme="light"] .secondary-button {
+  color: var(--text);
+  background: rgba(15,35,65,.055);
+}
+@media (max-width: 560px) {
+  .theme-toggle { top: 10px; right: 10px; min-height: 36px; font-size: .72rem; }
+}
